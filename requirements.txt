@@ -1,0 +1,7 @@
+fastapi>=0.110
+pydantic>=2
+pyyaml
+prometheus_client
+httpx
+pytest
+# optional providers: anthropic, openai
