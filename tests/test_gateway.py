@@ -9,7 +9,9 @@ from gateway.ledger import Ledger
 from gateway.providers import MockProvider
 from gateway.redact import redact
 
-BASE = yaml.safe_load(open("gateway/config.yaml"))
+from pathlib import Path
+
+BASE = yaml.safe_load((Path(__file__).resolve().parent.parent / "gateway" / "config.yaml").read_text())
 KEYS = {"search-assistant": "key-search", "store-ops-bot": "key-ops"}
 
 
