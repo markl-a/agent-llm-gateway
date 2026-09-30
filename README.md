@@ -9,8 +9,8 @@ agent ──Bearer <per-agent key>──► /v1/chat
    1 identity   key → {agent, team, project, budget, rpm, allowed tiers}
    2 rate limit per-agent sliding window
    3 budget     ≥80% of monthly budget: "smart" is served by "fast"   ≥100%: 429
-   4 redact     TW national ID / email / mobile / card numbers never leave the boundary
-   5 route      tier = ordered [provider, model] list; first healthy wins, rest are fallbacks
+   4 redact     regex masks TW national ID / email / TW mobile / card-number formats before the prompt leaves (pattern-based, not a full PII detector)
+   5 route      tier = ordered [provider, model] list, tried in order; on a provider error the next one is used (no health probing)
    6 account    ledger row per call (labels + tokens + USD) · Prometheus counters
 ```
 
@@ -20,7 +20,7 @@ agent ──Bearer <per-agent key>──► /v1/chat
 - **Degrade before block.** Cutting an agent off mid-month breaks a business flow; routing it to a cheaper tier keeps it working while the owner is alerted.
 - **Tiers, not model names.** Agents ask for `fast` or `smart`. Swapping a model or provider is a config change and does not touch agent code.
 - **Prices live in config.** Cost is computed from actual token counts returned by the provider.
-- **Redaction happens in the gateway**, so it is enforced once rather than trusted to every agent.
+- **Redaction happens in the gateway**, so it is enforced once rather than trusted to every agent. The patterns cover common formats only; names and free-text identifiers still need a proper detector.
 
 ## Run
 
